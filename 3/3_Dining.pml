@@ -3,6 +3,7 @@
 
 chan chopstick[5]=[0] of {bit};
 int t=0;
+
 proctype djikstra(int i)
 {
 	do
@@ -13,39 +14,52 @@ proctype djikstra(int i)
 proctype timer()
 {
 	do
-	:: (t<100)->t++;
-	:: (t>=100)-> break;
+	:: (t<200)->t++;
+	:: (t>=200)-> break;
 	od
 }
 
 proctype philosopher(int i)
 {
 	do
-	::(t<100)->
+	::(t<200)->
 		if
-		:: (i<(i+1)%5) ->
+		:: 	
 			atomic
 			{
-				chopstick[i]?p;
-				chopstick[(i+1)%5]?p;
+				(i<(i+1)%5) ->
 
-				printf("Philosopher %d is eating at time %d\n",i,t);
+				chopstick[i]?p;
+				printf("Philosopher %d acquired his first fork %d.\n",i,i);
+				chopstick[(i+1)%5]?p;
+				printf("Philosopher %d acquired his second fork %d.\n",i,(i+1)%5);
+
+				printf("Philosopher %d is eating.\n",i);
+				
 				chopstick[i]!v;
+				printf("Philosopher %d released his first fork %d.\n",i,i);
 				chopstick[(i+1)%5]!v;
+				printf("Philosopher %d released his second fork %d.\n",i,(i+1)%5);
 			}
-		:: (i>(i+1)%5) ->
+		:: 	
 			atomic
 			{
-				chopstick[(i+1)%5]?p;
-				chopstick[i]?p;
+				(i>(i+1)%5) ->
 
-				printf("Philosopher %d is eating at time %d\n",i,t);
+				chopstick[(i+1)%5]?p;
+				printf("Philosopher %d acquired his first fork %d.\n",i,(i+1)%5);
+				chopstick[i]?p;
+				printf("Philosopher %d acquired his second fork %d.\n",i,i);
+
+				printf("Philosopher %d is eating.\n",i);
 
 				chopstick[(i+1)%5]!v;
+				printf("Philosopher %d released his first fork %d.\n",i,(i+1)%5);
 				chopstick[i]!v;
+				printf("Philosopher %d released his second fork %d.\n",i,i);
 			}
 		fi
-	::(t>=100)-> break;
+	::(t>=200)-> break;
 	od
 }
 
