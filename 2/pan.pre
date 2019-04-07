@@ -1,0 +1,63 @@
+# 1 "2_ReaderWriter.pml"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 1 "/usr/include/stdc-predef.h" 1 3 4
+# 1 "<command-line>" 2
+# 1 "2_ReaderWriter.pml"
+
+
+
+chan sema=[0] of {bit};
+
+proctype djikstra()
+{
+ do
+ :: sema!0 -> sema?1;
+ od
+}
+
+proctype writer(chan buffer)
+{
+ int t;
+ t=1;
+ do
+ :: if
+  :: (len(buffer)==10) -> break;
+  :: (len(buffer)!=10) ->
+    sema?0;
+    buffer!t;
+    printf("Writer wrote: %d\n",t);
+    t++;
+    sema!1;
+  fi
+ od
+}
+
+proctype reader(chan buffer;int id)
+{
+ int t;
+ do
+ :: if
+  :: (len(buffer)==0) -> skip;
+  ::
+   (len(buffer)!=0) -> buffer?t;
+    printf("\t\tReader %d read: %d\n",id,t);
+  fi
+ od
+}
+
+proctype monitor(chan buffer)
+{
+ assert(len(buffer)>=0 && len(buffer)<=10);
+}
+init
+{
+ chan buffer=[10] of {int};
+ atomic
+ {
+  run djikstra();
+  run writer(buffer);
+  run reader(buffer,1);
+  run reader(buffer,2);
+ }
+}
