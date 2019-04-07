@@ -1,53 +1,103 @@
-# 1 "1j.pml"
+# 1 "7.pml"
 # 1 "<built-in>"
 # 1 "<command-line>"
 # 1 "/usr/include/stdc-predef.h" 1 3 4
 # 1 "<command-line>" 2
-# 1 "1j.pml"
-proctype producer(chan buffer)
+# 1 "7.pml"
+
+
+
+mtype = { Red , Orange , Green };
+
+byte s1_status;
+byte s2_status;
+bit sensor_status;
+
+chan chan_s1=[0] of {byte};
+
+chan chan_s2=[0] of {byte};
+
+chan chan_sensor=[0] of {bit};
+
+proctype HighwaySignal(mtype status)
 {
- int t;
- t=1;
+ s1_status=status;
+
  do
- :: if
-  :: (len(buffer)==10) -> skip;
-  :: atomic
+ ::
+  if
+  ::
+   atomic
    {
-    (len(buffer)!=10) ->
-    buffer!t;
-    printf("Producer produced item: %d\n",t);
-    t++;
+    chan_sensor?1;
+    s1_status=Orange;
+    chan_s1!s1_status;
+    chan_s2?Green;
+    s1_status=Red;
+    chan_s1!s1_status;
    }
+   atomic
+   {
+    chan_s2?Orange;
+    chan_s1!Green;
+    chan_s2?Red;
+    s1_status=Green;
+   }
+  :: chan_sensor?0;
   fi
  od
 }
 
-proctype consumer(chan buffer)
+proctype FarmRoadSignal(mtype status)
 {
- int t;
+ s2_status=status;
  do
- :: if
-  :: (len(buffer)==0) -> skip;
-  :: atomic
+ ::
+  atomic
+  {
+   chan_s1?Orange;
+   chan_s2!Green;
+   chan_s1?Red;
+   s2_status=Green;
+  }
+  do
+  ::
+   atomic
    {
-    (len(buffer)!=0) ->
-    buffer?t;
-    printf("\tConsumer consumed item: %d\n",t);
+    chan_sensor?0;
+    s2_status=Orange;
+    chan_s2!s2_status;
+    chan_s1?Green;
+    s2_status=Red;
+    chan_s2!s2_status;
+    break;
    }
-  fi
+  ::
+   atomic
+   {
+    chan_sensor?1;
+   }
+  od
  od
 }
 
-proctype monitor(chan buffer)
+proctype Sensor()
 {
- assert(len(buffer)>=0 && len(buffer)<=10);
+ do
+ :: if
+  :: sensor_status=1;
+  :: sensor_status=0;
+  fi
+  chan_sensor!sensor_status;
+ od
 }
+
 init
 {
- chan buffer=[10] of {int};
  atomic
  {
-  run producer(buffer);
-  run consumer(buffer);
+  run HighwaySignal(Green);
+  run FarmRoadSignal(Red);
+  run Sensor();
  }
 }

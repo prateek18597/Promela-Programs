@@ -1,16 +1,32 @@
 int t=0;
 
-proctype signal(int i)
+proctype signalFirst()
 {
+	do
+	::
+	od
+}
 
+proctype signalMiddle()
+{
+	do
+	::
+	od
+}
+
+proctype signalLast()
+{
+	do
+	::
+	od
 }
 
 init
 {
 	atomic
 	{
-		run signal(1);
-		run signal(2);
-		run signal(3);
+		run signalFirst();
+		run signalMiddle();
+		run signalLast();
 	}
 }
