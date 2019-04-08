@@ -16,7 +16,7 @@ proctype writer(chan buffer)
 	t=1;
 	do
 	::	if
-		:: (len(buffer)==10) -> break;
+		:: 	(len(buffer)==10) -> break;
 		:: 	(len(buffer)!=10) -> 
 				buffer!t; 
 				printf("Writer wrote: %d\n",t);
