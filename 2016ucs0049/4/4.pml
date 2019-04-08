@@ -5,12 +5,14 @@ proctype signalFirst(chan b1)
 	do
 	:: 	atomic
 		{
-			(len(b1)==1)-> printf("Unsafe State: Crash Occured in Block 1.\n");
+			(len(b1)==1)-> 
+				printf("Unsafe State: Crash Occured in Block 1.\n");
 		}
 	:: 	atomic
 		{
-			(len(b1)!=1)-> 	b1!train;
-							printf("Train Arrived in Block 1.\n");
+			(len(b1)!=1)-> 	
+				b1!train;
+				printf("Train Arrived in Block 1.\n");
 		}
 	od
 }
@@ -20,14 +22,16 @@ proctype signalMiddle(chan b1,b2)
 	do
 	:: 	atomic
 		{
-			(len(b2)==1)-> printf("Unsafe State: Crash Occured in Block 2.\n");
+			(len(b2)==1)-> 
+				printf("Unsafe State: Crash Occured in Block 2.\n");
 		}
 	:: 	atomic
 		{
-			(len(b2)!=1)-> 	b1?train;
-							printf("Train Departed from Block 1.\n");
-							b2!train;
-							printf("Train Arrived in Block 2.\n");
+			(len(b2)!=1)-> 	
+				b1?train;
+				printf("Train Departed from Block 1.\n");
+				b2!train;
+				printf("Train Arrived in Block 2.\n");
 		}
 	od
 }
