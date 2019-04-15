@@ -17,13 +17,11 @@ proctype HighwaySignal(mtype status)
 {
 	s1_status=status;
 	
-	do
-	:: 	
-		if
-		::
+	do	
+	::
 			atomic
 			{
-				chan_sensor?On;			
+				chan_sensor?On;//Turning Farm road signal green and highway signal red when a vehicle arrive on farm road.			
 				s1_status=Orange;
 				chan_s1!s1_status;
 				chan_s2?Green;
@@ -32,13 +30,12 @@ proctype HighwaySignal(mtype status)
 			}	
 			atomic
 			{
-				chan_s2?Orange;
+				chan_s2?Orange;	//Turning highway signal green when farm road signal turn orange.
 				chan_s1!Green;
 				chan_s2?Red;
 				s1_status=Green;	
 			}
-		:: 	chan_sensor?Off;
-		fi	
+	:: 	chan_sensor?Off;
 	od
 }
 
@@ -49,7 +46,7 @@ proctype FarmRoadSignal(mtype status)
 	:: 	
 		atomic
 		{
-			chan_s1?Orange;
+			chan_s1?Orange;	//Turning farm road signal green when highway signal turn orange.
 			chan_s2!Green;
 			chan_s1?Red;
 			s2_status=Green;
@@ -58,7 +55,7 @@ proctype FarmRoadSignal(mtype status)
 		::
 			atomic
 			{
-				chan_sensor?Off;
+				chan_sensor?Off;	//Turning Farm road signal red and highway signal green when farm road is empty.
 				s2_status=Orange;
 				chan_s2!s2_status;
 				chan_s1?Green;
@@ -78,11 +75,18 @@ proctype FarmRoadSignal(mtype status)
 proctype Sensor()
 {
 	do
-	:: 	if
-		::	sensor_status=On;
-		:: 	sensor_status=Off;
-		fi
-		chan_sensor!sensor_status;
+	:: 	
+		atomic
+		{
+			sensor_status=On;
+			chan_sensor!sensor_status;//vehicle arriving on farm road
+		}
+	:: 	
+		atomic
+		{
+			sensor_status=Off;
+			chan_sensor!sensor_status;//farm road is empty
+		}
 	od
 }
 

@@ -14,6 +14,6 @@ init
 	h=run hello();
 	w=run world();
 	printf("PID of hello Process: %d\n",h);
-	printf("PID of hello Process: %d\n",w);
+	printf("PID of world Process: %d\n",w);
 	printf("PID of init Process: %d\n",_pid);
 }

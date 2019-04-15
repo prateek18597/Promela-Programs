@@ -1,0 +1,9 @@
+On changing seed value, data values of variables changes as the order of execution of statement changes with seed value.
+
+Due to the use of atomic, no race condition can't occur in this case.
+
+For Example:
+1. Seed Value: 1234
+	state = 0
+2. Seed Value: 123
+	state = 2

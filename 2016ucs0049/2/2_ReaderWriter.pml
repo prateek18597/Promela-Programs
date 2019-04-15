@@ -3,10 +3,10 @@ int msg[10];
 proctype writer(chan buffer)
 {
 	int t;
-	int w_pos=0;
+	int w_pos=0;//Contains pos to write in buffer.
 	t=1;
 	do
-	:: 	(w_pos==10) -> break;
+	:: 	(w_pos==10) -> break;// Checking whether buffer is full, If full writer would stop writing.
 	:: 	atomic
 		{
 			(w_pos!=10) -> 
@@ -25,7 +25,7 @@ proctype reader(chan buffer;int id)
 	int r_pos=0;
 	do
 	::	(r_pos==len(buffer))-> 
-			skip;
+			skip;// Checking whether reader has read everything written by writer till now. 
 	:: 	atomic
 		{
 			(r_pos<len(buffer))->
@@ -35,14 +35,16 @@ proctype reader(chan buffer;int id)
 	:: 	atomic
 		{
 			(r_pos==10)->
-			break;
+			break;// Checking if reader has completely read the buffer.
 		}
 	od
 }
 
 proctype monitor(chan buffer)
 {
-	assert(len(buffer)>=0 && len(buffer)<=10);
+	do
+	::	assert(len(buffer)>=0 && len(buffer)<=10);//Checking program invarient.
+	od
 }
 
 init

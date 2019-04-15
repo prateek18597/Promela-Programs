@@ -1,0 +1,19 @@
+Various windows displayed by iSpin are:
+1. Code Window: Shows code for the given promela program.
+2. Automata view: Shows automata view of states of the program.
+3. MSC (Message Sequence Chart) View: Shows how messages are transferred among processes.
+4. State View: Shows are value of variables in the program.
+5. Status View: Shows the log of execution of program.
+
+On changing seed value, data values of variables changes as the order of execution of statement changes with seed value.
+
+Due to no proper syncronization among processes race condition is observed.
+
+For Example:
+1. Seed Value: 123634 
+	x = 2
+	y = 4
+2. Seed Value: 123
+	x = 2
+	y = 5
+	

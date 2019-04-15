@@ -1,0 +1,11 @@
+On changing seed value, data values of variables changes as the order of execution of statement changes with seed value.
+
+Due to no proper syncronization among processes race condition is observed.
+
+For Example:
+1. Seed Value: 1234543
+	state = 0
+2. Seed Value: 123
+	state = 1
+3. Seed Value: 4355
+	state = 2
